@@ -102,6 +102,21 @@ final class OSCParserTests: XCTestCase {
         XCTAssertEqual(message?.address, addr)
     }
 
+    func testParseMissingArgumentDataReturnsNil() {
+        let data = buildOSCMessage(address: "/test", typeTags: ",i", args: [])
+        let message = OSCParser.parse(data: data)
+        XCTAssertNil(message)
+    }
+
+    func testParseMissingStringTerminatorReturnsNil() {
+        var data = Data()
+        writeOSCString("/test", to: &data)
+        writeOSCString(",s", to: &data)
+        data.append(contentsOf: "hello".utf8)
+        let message = OSCParser.parse(data: data)
+        XCTAssertNil(message)
+    }
+
     // MARK: - OSC Data Builder Helpers
 
     private enum OSCArg {
