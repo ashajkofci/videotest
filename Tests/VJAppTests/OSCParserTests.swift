@@ -24,7 +24,7 @@ final class OSCParserTests: XCTestCase {
         XCTAssertNotNil(message)
         XCTAssertEqual(message?.address, "/layer/1/opacity")
         if case .float(let value) = message?.arguments[0] {
-            XCTAssertEqual(value, 0.7, accuracy: 0.001)
+            XCTAssertEqual(value, Float(0.7), accuracy: Float(0.001))
         } else {
             XCTFail("Expected float argument")
         }
@@ -53,9 +53,9 @@ final class OSCParserTests: XCTestCase {
         if case .float(let r) = message?.arguments[0],
            case .float(let g) = message?.arguments[1],
            case .float(let b) = message?.arguments[2] {
-            XCTAssertEqual(r, 1.0, accuracy: 0.001)
-            XCTAssertEqual(g, 0.2, accuracy: 0.001)
-            XCTAssertEqual(b, 0.1, accuracy: 0.001)
+            XCTAssertEqual(r, Float(1.0), accuracy: Float(0.001))
+            XCTAssertEqual(g, Float(0.2), accuracy: Float(0.001))
+            XCTAssertEqual(b, Float(0.1), accuracy: Float(0.001))
         } else {
             XCTFail("Expected three float arguments")
         }
@@ -71,7 +71,7 @@ final class OSCParserTests: XCTestCase {
         XCTAssertNotNil(message)
         XCTAssertEqual(message?.arguments.count, 3)
         if case .int(let i) = message?.arguments[0] { XCTAssertEqual(i, 42) }
-        if case .float(let f) = message?.arguments[1] { XCTAssertEqual(f, 3.14, accuracy: 0.01) }
+        if case .float(let f) = message?.arguments[1] { XCTAssertEqual(f, Float(3.14), accuracy: Float(0.01)) }
         if case .string(let s) = message?.arguments[2] { XCTAssertEqual(s, "hello") }
     }
 

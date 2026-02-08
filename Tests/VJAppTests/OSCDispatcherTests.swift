@@ -38,7 +38,7 @@ final class OSCDispatcherTests: XCTestCase {
         let bindings = [OSCBinding(address: "/layer/1/opacity", target: .layerOpacity, layerIndex: 0)]
         let message = OSCMessage(address: "/layer/1/opacity", arguments: [.float(0.7)])
         dispatcher.dispatch(message: message, bindings: bindings)
-        XCTAssertEqual(engine.activeScene?.layers[0].opacity, 0.7, accuracy: 0.001)
+        XCTAssertEqual(engine.activeScene!.layers[0].opacity, Float(0.7), accuracy: Float(0.001))
     }
 
     func testLayerPosition() {
@@ -46,9 +46,9 @@ final class OSCDispatcherTests: XCTestCase {
         let bindings = [OSCBinding(address: "/layer/1/position", target: .layerPosition, layerIndex: 0)]
         let message = OSCMessage(address: "/layer/1/position", arguments: [.float(0.3), .float(0.8)])
         dispatcher.dispatch(message: message, bindings: bindings)
-        let pos = engine.activeScene?.layers[0].transform.position
-        XCTAssertEqual(pos?.x, 0.3, accuracy: 0.001)
-        XCTAssertEqual(pos?.y, 0.8, accuracy: 0.001)
+        let pos = engine.activeScene!.layers[0].transform.position
+        XCTAssertEqual(pos.x, Float(0.3), accuracy: Float(0.001))
+        XCTAssertEqual(pos.y, Float(0.8), accuracy: Float(0.001))
     }
 
     func testLayerScale() {
@@ -56,9 +56,9 @@ final class OSCDispatcherTests: XCTestCase {
         let bindings = [OSCBinding(address: "/layer/1/scale", target: .layerScale, layerIndex: 0)]
         let message = OSCMessage(address: "/layer/1/scale", arguments: [.float(2.0), .float(1.5)])
         dispatcher.dispatch(message: message, bindings: bindings)
-        let scale = engine.activeScene?.layers[0].transform.scale
-        XCTAssertEqual(scale?.x, 2.0, accuracy: 0.001)
-        XCTAssertEqual(scale?.y, 1.5, accuracy: 0.001)
+        let scale = engine.activeScene!.layers[0].transform.scale
+        XCTAssertEqual(scale.x, Float(2.0), accuracy: Float(0.001))
+        XCTAssertEqual(scale.y, Float(1.5), accuracy: Float(0.001))
     }
 
     func testLayerRotation() {
@@ -66,7 +66,7 @@ final class OSCDispatcherTests: XCTestCase {
         let bindings = [OSCBinding(address: "/layer/1/rotation", target: .layerRotation, layerIndex: 0)]
         let message = OSCMessage(address: "/layer/1/rotation", arguments: [.float(1.57)])
         dispatcher.dispatch(message: message, bindings: bindings)
-        XCTAssertEqual(engine.activeScene?.layers[0].transform.rotation, 1.57, accuracy: 0.01)
+        XCTAssertEqual(engine.activeScene!.layers[0].transform.rotation, Float(1.57), accuracy: Float(0.01))
     }
 
     func testLayerSpeed() {
@@ -74,7 +74,7 @@ final class OSCDispatcherTests: XCTestCase {
         let bindings = [OSCBinding(address: "/layer/1/speed", target: .layerSpeed, layerIndex: 0)]
         let message = OSCMessage(address: "/layer/1/speed", arguments: [.float(1.25)])
         dispatcher.dispatch(message: message, bindings: bindings)
-        XCTAssertEqual(engine.activeScene?.layers[0].playback.speed, 1.25, accuracy: 0.01)
+        XCTAssertEqual(engine.activeScene!.layers[0].playback.speed, Float(1.25), accuracy: Float(0.01))
     }
 
     func testLayerPlayState() {
@@ -110,9 +110,9 @@ final class OSCDispatcherTests: XCTestCase {
         let message = OSCMessage(address: "/layer/1/tint/color", arguments: [.float(1.0), .float(0.2), .float(0.1)])
         dispatcher.dispatch(message: message, bindings: bindings)
         if case .float3(let rgb) = engine.activeScene?.layers[0].effects[0].parameters["color"] {
-            XCTAssertEqual(rgb[0], 1.0, accuracy: 0.001)
-            XCTAssertEqual(rgb[1], 0.2, accuracy: 0.001)
-            XCTAssertEqual(rgb[2], 0.1, accuracy: 0.001)
+            XCTAssertEqual(rgb[0], Float(1.0), accuracy: Float(0.001))
+            XCTAssertEqual(rgb[1], Float(0.2), accuracy: Float(0.001))
+            XCTAssertEqual(rgb[2], Float(0.1), accuracy: Float(0.001))
         } else {
             XCTFail("Expected float3 color parameter")
         }
@@ -124,7 +124,7 @@ final class OSCDispatcherTests: XCTestCase {
         let message = OSCMessage(address: "/layer/1/tint/amount", arguments: [.float(0.8)])
         dispatcher.dispatch(message: message, bindings: bindings)
         if case .float(let amount) = engine.activeScene?.layers[0].effects[0].parameters["amount"] {
-            XCTAssertEqual(amount, 0.8, accuracy: 0.001)
+            XCTAssertEqual(amount, Float(0.8), accuracy: Float(0.001))
         } else {
             XCTFail("Expected float amount parameter")
         }
@@ -144,7 +144,7 @@ final class OSCDispatcherTests: XCTestCase {
         let message = OSCMessage(address: "/layer/1/effect/0/brightness", arguments: [.float(0.3)])
         dispatcher.dispatch(message: message, bindings: bindings)
         if case .float(let value) = engine.activeScene?.layers[0].effects[0].parameters["brightness"] {
-            XCTAssertEqual(value, 0.3, accuracy: 0.001)
+            XCTAssertEqual(value, Float(0.3), accuracy: Float(0.001))
         } else {
             XCTFail("Expected float brightness parameter")
         }
@@ -168,7 +168,7 @@ final class OSCDispatcherTests: XCTestCase {
         let message = OSCMessage(address: "/layer/1/opacity", arguments: [.float(0.5)])
         dispatcher.dispatch(message: message, bindings: bindings)
         // Layer should remain unchanged (opacity = 1.0)
-        XCTAssertEqual(engine.activeScene?.layers[0].opacity, 1.0, accuracy: 0.001)
+        XCTAssertEqual(engine.activeScene!.layers[0].opacity, Float(1.0), accuracy: Float(0.001))
     }
 
     // MARK: - Helpers

@@ -103,7 +103,7 @@ final class SceneEngineTests: XCTestCase {
         engine.updateLayer(index: 0) { layer in
             layer.opacity = 0.5
         }
-        XCTAssertEqual(engine.activeScene?.layers[0].opacity, 0.5, accuracy: 0.001)
+        XCTAssertEqual(engine.activeScene!.layers[0].opacity, Float(0.5), accuracy: Float(0.001))
     }
 
     func testUpdateLayerInvalidIndex() {

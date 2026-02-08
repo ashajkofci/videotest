@@ -59,8 +59,8 @@ final class MeshMappingTests: XCTestCase {
         let vertices = MeshBuilder.buildVertices(mapping: nil, transform: transform)
         // With identity transform and anchor at origin, positions should equal mesh points
         for vertex in vertices {
-            XCTAssertEqual(vertex.position.x, vertex.texCoord.x, accuracy: 0.001)
-            XCTAssertEqual(vertex.position.y, vertex.texCoord.y, accuracy: 0.001)
+            XCTAssertEqual(vertex.position.x, vertex.texCoord.x, accuracy: Float(0.001))
+            XCTAssertEqual(vertex.position.y, vertex.texCoord.y, accuracy: Float(0.001))
         }
     }
 
@@ -91,8 +91,8 @@ final class MeshMappingTests: XCTestCase {
         let vertices = MeshBuilder.buildVertices(mapping: nil, transform: transform)
         // Scaled by 2, so positions should be double the tex coords
         for vertex in vertices {
-            XCTAssertEqual(vertex.position.x, vertex.texCoord.x * 2.0, accuracy: 0.001)
-            XCTAssertEqual(vertex.position.y, vertex.texCoord.y * 2.0, accuracy: 0.001)
+            XCTAssertEqual(vertex.position.x, vertex.texCoord.x * 2.0, accuracy: Float(0.001))
+            XCTAssertEqual(vertex.position.y, vertex.texCoord.y * 2.0, accuracy: Float(0.001))
         }
     }
 }

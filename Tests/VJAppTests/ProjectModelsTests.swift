@@ -70,7 +70,7 @@ final class ProjectModelsTests: XCTestCase {
         let floatData = try encoder.encode(floatParam)
         let decodedFloat = try decoder.decode(EffectParameter.self, from: floatData)
         if case .float(let value) = decodedFloat {
-            XCTAssertEqual(value, 0.75, accuracy: 0.001)
+            XCTAssertEqual(value, Float(0.75), accuracy: Float(0.001))
         } else {
             XCTFail("Expected .float parameter")
         }
@@ -79,9 +79,9 @@ final class ProjectModelsTests: XCTestCase {
         let decodedFloat3 = try decoder.decode(EffectParameter.self, from: float3Data)
         if case .float3(let values) = decodedFloat3 {
             XCTAssertEqual(values.count, 3)
-            XCTAssertEqual(values[0], 1.0, accuracy: 0.001)
-            XCTAssertEqual(values[1], 0.5, accuracy: 0.001)
-            XCTAssertEqual(values[2], 0.2, accuracy: 0.001)
+            XCTAssertEqual(values[0], Float(1.0), accuracy: Float(0.001))
+            XCTAssertEqual(values[1], Float(0.5), accuracy: Float(0.001))
+            XCTAssertEqual(values[2], Float(0.2), accuracy: Float(0.001))
         } else {
             XCTFail("Expected .float3 parameter")
         }
