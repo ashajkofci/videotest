@@ -19,8 +19,8 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode.app
 
-      - name: Build release binary
-        run: swift build -c release -v
+      - name: Build release binary (universal)
+        run: swift build -c release -v --arch arm64 --arch x86_64
 
       - name: Compile Metal shaders
         run: |
@@ -34,14 +34,16 @@ jobs:
           mkdir -p "${APP_DIR}/MacOS"
           mkdir -p "${APP_DIR}/Resources"
 
+          BUILD_DIR=".build/apple/Products/Release"
+
           # Copy executable
-          cp .build/release/${APP_NAME} "${APP_DIR}/MacOS/${APP_NAME}"
+          cp "${BUILD_DIR}/${APP_NAME}" "${APP_DIR}/MacOS/${APP_NAME}"
 
           # Copy compiled Metal library
           cp /tmp/default.metallib "${APP_DIR}/Resources/default.metallib"
 
           # Copy bundle resources
-          for bundle in .build/release/*.bundle; do
+          for bundle in "${BUILD_DIR}"/*.bundle; do
             if [ -d "$bundle" ]; then
               cp -R "$bundle" "${APP_DIR}/Resources/"
             fi
@@ -78,6 +80,9 @@ jobs:
           </dict>
           </plist>
           PLISTEOF
+
+      - name: Ad-hoc sign app bundle
+        run: codesign --force --deep --sign - "VJApp.app"
 
       - name: Create zip archive
         run: |
