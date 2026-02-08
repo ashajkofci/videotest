@@ -13,10 +13,16 @@ struct MediaItem: Codable, Identifiable {
     var id: String
     var name: String
     var path: String
+    var resolvedPath: String?
     var duration: Double
     var fps: Double
     var resolution: Resolution
     var lastKnownBookmark: Data?
+
+    var isMissing: Bool {
+        let activePath = resolvedPath ?? path
+        return !FileManager.default.fileExists(atPath: activePath)
+    }
 }
 
 struct Resolution: Codable {
@@ -158,6 +164,7 @@ struct OSCBinding: Codable, Identifiable {
     var target: OSCTarget
     var layerIndex: Int?
     var effectIndex: Int?
+    var parameterKey: String?
 }
 
 enum OSCTarget: String, Codable {

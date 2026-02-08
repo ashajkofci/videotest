@@ -6,7 +6,7 @@ final class OutputWindowController: NSWindowController {
 
     init(displayID: Int) {
         self.displayID = displayID
-        let screen = NSScreen.screens.first
+        let screen = NSScreen.screens.indices.contains(displayID) ? NSScreen.screens[displayID] : NSScreen.screens.first
         let window = NSWindow(
             contentRect: screen?.frame ?? .zero,
             styleMask: [.titled, .resizable, .closable],

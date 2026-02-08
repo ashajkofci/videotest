@@ -35,6 +35,15 @@ final class SceneEngine: ObservableObject {
         }
     }
 
+    func triggerScene(name: String) {
+        guard let index = project.scenes.firstIndex(where: { $0.name == name }) else { return }
+        triggerScene(index: index)
+    }
+
+    func setCrossfadeTime(_ time: TimeInterval) {
+        crossfadeTime = max(0.0, time)
+    }
+
     private func tickTransition() {
         guard let start = transitionStart else { return }
         let elapsed = Date().timeIntervalSince(start)
@@ -56,5 +65,28 @@ final class SceneEngine: ObservableObject {
 
     func updateProject(_ project: Project) {
         self.project = project
+    }
+
+    func updateLayer(index: Int, _ update: (inout LayerInstance) -> Void) {
+        guard project.scenes.indices.contains(activeSceneIndex),
+              project.scenes[activeSceneIndex].layers.indices.contains(index) else { return }
+        var scene = project.scenes[activeSceneIndex]
+        var layer = scene.layers[index]
+        update(&layer)
+        scene.layers[index] = layer
+        project.scenes[activeSceneIndex] = scene
+    }
+
+    func updateEffect(layerIndex: Int, effectIndex: Int, _ update: (inout Effect) -> Void) {
+        guard project.scenes.indices.contains(activeSceneIndex),
+              project.scenes[activeSceneIndex].layers.indices.contains(layerIndex) else { return }
+        var scene = project.scenes[activeSceneIndex]
+        var layer = scene.layers[layerIndex]
+        guard layer.effects.indices.contains(effectIndex) else { return }
+        var effect = layer.effects[effectIndex]
+        update(&effect)
+        layer.effects[effectIndex] = effect
+        scene.layers[layerIndex] = layer
+        project.scenes[activeSceneIndex] = scene
     }
 }

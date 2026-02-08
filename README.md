@@ -40,14 +40,16 @@ Sources/VJApp/
     EffectStack.swift
   Engine/
     SceneEngine.swift
+  Data/
+    ProjectStore.swift
   OSC/
     OSCServer.swift
     OSCBinding.swift
   UI/
     ContentView.swift
     OutputWindowController.swift
-Resources/
-  Shaders.metal
+  Resources/
+    Shaders.metal
 ```
 
 ## Data models (schemaVersion=1)

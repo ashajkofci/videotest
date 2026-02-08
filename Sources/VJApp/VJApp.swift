@@ -6,6 +6,7 @@ struct VJApp: App {
     @StateObject private var oscServer: OSCServer
     private let oscDispatcher: OSCDispatcher
     private let outputWindowController: OutputWindowController
+    private let projectStore: ProjectStore
 
     init() {
         let demoProject = Project(
@@ -21,10 +22,13 @@ struct VJApp: App {
         self._oscServer = StateObject(wrappedValue: oscServer)
         self.oscDispatcher = OSCDispatcher(engine: engine)
         self.outputWindowController = OutputWindowController(displayID: demoProject.output.displayId)
-        oscServer.onMessage = { message in
-            oscDispatcher.dispatch(message: message, bindings: demoProject.osc.bindings)
+        self.projectStore = ProjectStore()
+        oscServer.onMessage = { [weak engine] message in
+            guard let engine else { return }
+            oscDispatcher.dispatch(message: message, bindings: engine.project.osc.bindings)
         }
         oscServer.start()
+        configureAutosave(for: engine)
     }
 
     var body: some Scene {
@@ -33,6 +37,20 @@ struct VJApp: App {
                 .onAppear {
                     outputWindowController.showWindow(nil)
                 }
+        }
+    }
+
+    private func configureAutosave(for engine: SceneEngine) {
+        guard let baseURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+            return
+        }
+        let folderURL = baseURL.appendingPathComponent("VJApp", isDirectory: true)
+        let autosaveURL = folderURL.appendingPathComponent("autosave.json")
+        do {
+            try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
+            projectStore.startAutosave(project: { engine.project }, to: autosaveURL)
+        } catch {
+            NSLog("Autosave setup failed: \(error)")
         }
     }
 }

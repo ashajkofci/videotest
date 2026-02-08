@@ -15,7 +15,7 @@ struct ContentView: View {
             VStack {
                 Text("Preview Canvas")
                     .font(.headline)
-                MetalViewRepresentable()
+                MetalViewRepresentable(engine: engine)
             }
             VStack(alignment: .leading) {
                 Text("Scenes")
@@ -39,14 +39,29 @@ struct ContentView: View {
 }
 
 struct MetalViewRepresentable: NSViewRepresentable {
+    let engine: SceneEngine
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
     func makeNSView(context: Context) -> MTKView {
         let view = MTKView()
-        _ = MetalRenderer(mtkView: view)
+        context.coordinator.renderer = MetalRenderer(mtkView: view)
         view.enableSetNeedsDisplay = false
         view.isPaused = false
         return view
     }
 
     func updateNSView(_ nsView: MTKView, context: Context) {
+        guard let renderer = context.coordinator.renderer else { return }
+        renderer.activeScene = engine.activeScene
+        renderer.transitionScene = engine.transitionScene
+        renderer.transitionProgress = engine.crossfadeProgress
+        renderer.targetFPS = engine.project.output.targetFPS
+    }
+
+    final class Coordinator {
+        var renderer: MetalRenderer?
     }
 }

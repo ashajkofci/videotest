@@ -8,7 +8,6 @@ final class VideoDecoder {
     private let player: AVPlayer
     private let frameQueue: FrameQueue
     private let decodeQueue = DispatchQueue(label: "decoder.queue", qos: .userInitiated)
-    private var displayLink: CADisplayLink?
     private var isRunning = false
 
     init(url: URL, frameQueue: FrameQueue) {
