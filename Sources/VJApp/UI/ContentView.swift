@@ -74,6 +74,11 @@ struct ContentView: View {
                         }
                         Spacer()
                         Button(role: .destructive) {
+                            if selectedSceneIndex == index {
+                                selectedSceneIndex = nil
+                            } else if let sel = selectedSceneIndex, sel > index {
+                                selectedSceneIndex = sel - 1
+                            }
                             engine.removeScene(id: engine.project.scenes[index].id)
                         } label: {
                             Image(systemName: "trash")
