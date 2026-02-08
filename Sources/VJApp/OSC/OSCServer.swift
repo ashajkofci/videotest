@@ -85,17 +85,14 @@ enum OSCParser {
         for tag in typeTags.dropFirst() {
             switch tag {
             case "i":
-                if let value = readInt32(data: data, cursor: &cursor) {
-                    arguments.append(.int(value))
-                }
+                guard let value = readInt32(data: data, cursor: &cursor) else { return nil }
+                arguments.append(.int(value))
             case "f":
-                if let value = readFloat32(data: data, cursor: &cursor) {
-                    arguments.append(.float(value))
-                }
+                guard let value = readFloat32(data: data, cursor: &cursor) else { return nil }
+                arguments.append(.float(value))
             case "s":
-                if let value = readString(data: data, cursor: &cursor) {
-                    arguments.append(.string(value))
-                }
+                guard let value = readString(data: data, cursor: &cursor) else { return nil }
+                arguments.append(.string(value))
             default:
                 return nil
             }
@@ -109,9 +106,12 @@ enum OSCParser {
         while cursor < data.count, data[cursor] != 0 {
             cursor += 1
         }
+        guard cursor < data.count else { return nil }
         let stringData = data[start..<cursor]
-        let result = String(data: stringData, encoding: .utf8)
-        cursor = align4(cursor + 1)
+        guard let result = String(data: stringData, encoding: .utf8) else { return nil }
+        let aligned = align4(cursor + 1)
+        guard aligned <= data.count else { return nil }
+        cursor = aligned
         return result
     }
 
