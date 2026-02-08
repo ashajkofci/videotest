@@ -138,6 +138,112 @@ final class SceneEngineTests: XCTestCase {
         XCTAssertEqual(engine.project.projectName, "Updated")
     }
 
+    // MARK: - Media Management
+
+    func testAddMediaItem() {
+        let engine = makeEngine(sceneCount: 1)
+        let item = MediaItem(
+            id: "m1",
+            name: "TestVideo",
+            path: "/test/video.mp4",
+            resolvedPath: nil,
+            duration: 10,
+            fps: 30,
+            resolution: Resolution(width: 1920, height: 1080),
+            lastKnownBookmark: nil
+        )
+        engine.addMediaItem(item)
+        XCTAssertEqual(engine.project.media.count, 1)
+        XCTAssertEqual(engine.project.media[0].name, "TestVideo")
+    }
+
+    func testRemoveMediaItem() {
+        let engine = makeEngine(sceneCount: 1)
+        let item = MediaItem(
+            id: "m1",
+            name: "TestVideo",
+            path: "/test/video.mp4",
+            resolvedPath: nil,
+            duration: 10,
+            fps: 30,
+            resolution: Resolution(width: 1920, height: 1080),
+            lastKnownBookmark: nil
+        )
+        engine.addMediaItem(item)
+        XCTAssertEqual(engine.project.media.count, 1)
+        engine.removeMediaItem(id: "m1")
+        XCTAssertEqual(engine.project.media.count, 0)
+    }
+
+    func testRemoveMediaItemNotFound() {
+        let engine = makeEngine(sceneCount: 1)
+        engine.removeMediaItem(id: "nonexistent")
+        XCTAssertEqual(engine.project.media.count, 0)
+    }
+
+    // MARK: - Scene Management
+
+    func testAddScene() {
+        let engine = makeEngine(sceneCount: 0)
+        engine.addScene(name: "New Scene")
+        XCTAssertEqual(engine.project.scenes.count, 1)
+        XCTAssertEqual(engine.project.scenes[0].name, "New Scene")
+        XCTAssertTrue(engine.project.scenes[0].layers.isEmpty)
+    }
+
+    func testRemoveScene() {
+        let engine = makeEngine(sceneCount: 3)
+        let sceneId = engine.project.scenes[1].id
+        engine.removeScene(id: sceneId)
+        XCTAssertEqual(engine.project.scenes.count, 2)
+        XCTAssertNil(engine.project.scenes.first(where: { $0.id == sceneId }))
+    }
+
+    func testRemoveSceneAdjustsActiveIndex() {
+        let engine = makeEngine(sceneCount: 2)
+        engine.triggerScene(index: 1)
+        // Complete the transition manually
+        engine.updateProject(engine.project)
+        let sceneId = engine.project.scenes[1].id
+        engine.removeScene(id: sceneId)
+        XCTAssertEqual(engine.project.scenes.count, 1)
+        XCTAssertTrue(engine.activeSceneIndex < engine.project.scenes.count || engine.project.scenes.isEmpty)
+    }
+
+    func testRemoveSceneNotFound() {
+        let engine = makeEngine(sceneCount: 2)
+        engine.removeScene(id: "nonexistent")
+        XCTAssertEqual(engine.project.scenes.count, 2)
+    }
+
+    // MARK: - Layer Management
+
+    func testAddLayerToScene() {
+        let engine = makeEngine(sceneCount: 1)
+        let initialLayerCount = engine.project.scenes[0].layers.count
+        engine.addLayer(toSceneIndex: 0, mediaId: "m1")
+        XCTAssertEqual(engine.project.scenes[0].layers.count, initialLayerCount + 1)
+    }
+
+    func testAddLayerInvalidSceneIndex() {
+        let engine = makeEngine(sceneCount: 1)
+        // Should not crash
+        engine.addLayer(toSceneIndex: 99, mediaId: "m1")
+    }
+
+    func testRemoveLayerFromScene() {
+        let engine = makeEngine(sceneCount: 1)
+        let layerId = engine.project.scenes[0].layers[0].id
+        engine.removeLayer(fromSceneIndex: 0, layerId: layerId)
+        XCTAssertEqual(engine.project.scenes[0].layers.count, 0)
+    }
+
+    func testRemoveLayerInvalidSceneIndex() {
+        let engine = makeEngine(sceneCount: 1)
+        // Should not crash
+        engine.removeLayer(fromSceneIndex: 99, layerId: "l0")
+    }
+
     // MARK: - Helpers
 
     private func makeEngine(sceneCount: Int) -> SceneEngine {
