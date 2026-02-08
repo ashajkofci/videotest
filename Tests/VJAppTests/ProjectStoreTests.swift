@@ -129,7 +129,7 @@ final class ProjectStoreTests: XCTestCase {
                           lastKnownBookmark: nil)
             ],
             scenes: [
-                Scene(id: "s1", name: "Default", layers: [
+                VJScene(id: "s1", name: "Default", layers: [
                     LayerInstance(
                         id: "l1", mediaId: "m1", order: 0,
                         transform: Transform(position: Vec2(x: 0.5, y: 0.5), scale: Vec2(x: 1, y: 1), rotation: 0, anchor: Vec2(x: 0.5, y: 0.5)),

@@ -185,9 +185,9 @@ final class OSCDispatcherTests: XCTestCase {
             projectName: "Test",
             media: [],
             scenes: [
-                Scene(id: "s0", name: "Scene 0", layers: [layer]),
-                Scene(id: "s1", name: "Scene 1", layers: [layer]),
-                Scene(id: "s2", name: "Scene 2", layers: [layer])
+                VJScene(id: "s0", name: "Scene 0", layers: [layer]),
+                VJScene(id: "s1", name: "Scene 1", layers: [layer]),
+                VJScene(id: "s2", name: "Scene 2", layers: [layer])
             ],
             output: OutputSettings(displayId: 0, resolution: Resolution(width: 1920, height: 1080), targetFPS: 60),
             osc: OSCSettings(port: 7000, bindings: [])
@@ -214,7 +214,7 @@ final class OSCDispatcherTests: XCTestCase {
         let project = Project(
             projectName: "Test",
             media: [],
-            scenes: [Scene(id: "s0", name: "Scene 0", layers: [layer])],
+            scenes: [VJScene(id: "s0", name: "Scene 0", layers: [layer])],
             output: OutputSettings(displayId: 0, resolution: Resolution(width: 1920, height: 1080), targetFPS: 60),
             osc: OSCSettings(port: 7000, bindings: [])
         )

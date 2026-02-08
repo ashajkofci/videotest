@@ -45,7 +45,7 @@ final class ProjectModelsTests: XCTestCase {
     func testSceneRoundTrip() throws {
         let scene = Self.sampleScene(name: "Scene A")
         let data = try JSONEncoder().encode(scene)
-        let decoded = try JSONDecoder().decode(Scene.self, from: data)
+        let decoded = try JSONDecoder().decode(VJScene.self, from: data)
         XCTAssertEqual(decoded.name, "Scene A")
         XCTAssertEqual(decoded.layers.count, scene.layers.count)
     }
@@ -186,11 +186,11 @@ final class ProjectModelsTests: XCTestCase {
                           duration: 30, fps: 60, resolution: Resolution(width: 3840, height: 2160), lastKnownBookmark: nil)
             ],
             scenes: [
-                Scene(id: "s1", name: "Intro", layers: [
+                VJScene(id: "s1", name: "Intro", layers: [
                     Self.sampleLayer(mediaId: "m1"),
                     Self.sampleLayer(mediaId: "m2")
                 ]),
-                Scene(id: "s2", name: "Main", layers: [
+                VJScene(id: "s2", name: "Main", layers: [
                     Self.sampleLayer(mediaId: "m2")
                 ])
             ],
@@ -226,8 +226,8 @@ final class ProjectModelsTests: XCTestCase {
         )
     }
 
-    static func sampleScene(name: String) -> Scene {
-        Scene(
+    static func sampleScene(name: String) -> VJScene {
+        VJScene(
             id: UUID().uuidString,
             name: name,
             layers: [sampleLayer(mediaId: "m1")]

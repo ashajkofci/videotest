@@ -142,7 +142,7 @@ final class SceneEngineTests: XCTestCase {
 
     private func makeEngine(sceneCount: Int) -> SceneEngine {
         let scenes = (0..<sceneCount).map { i in
-            Scene(
+            VJScene(
                 id: "s\(i)",
                 name: "Scene \(i)",
                 layers: [
@@ -190,7 +190,7 @@ final class SceneEngineTests: XCTestCase {
         let project = Project(
             projectName: "Test",
             media: [],
-            scenes: [Scene(id: "s0", name: "Scene 0", layers: [layer])],
+            scenes: [VJScene(id: "s0", name: "Scene 0", layers: [layer])],
             output: OutputSettings(displayId: 0, resolution: Resolution(width: 1920, height: 1080), targetFPS: 60),
             osc: OSCSettings(port: 7000, bindings: [])
         )
