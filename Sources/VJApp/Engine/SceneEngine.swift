@@ -14,12 +14,12 @@ final class SceneEngine: ObservableObject {
         self.project = project
     }
 
-    var activeScene: Scene? {
+    var activeScene: VJScene? {
         guard project.scenes.indices.contains(activeSceneIndex) else { return nil }
         return project.scenes[activeSceneIndex]
     }
 
-    var transitionScene: Scene? {
+    var transitionScene: VJScene? {
         guard let index = transitionSceneIndex, project.scenes.indices.contains(index) else { return nil }
         return project.scenes[index]
     }

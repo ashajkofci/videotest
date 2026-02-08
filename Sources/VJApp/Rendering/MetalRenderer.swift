@@ -9,8 +9,8 @@ final class MetalRenderer: NSObject, MTKViewDelegate {
     private let library: MTLLibrary
     private let effectStack: EffectStack
 
-    var activeScene: Scene?
-    var transitionScene: Scene?
+    var activeScene: VJScene?
+    var transitionScene: VJScene?
     var transitionProgress: Float = 0.0
     var targetFPS: Int = 60
 
@@ -27,8 +27,9 @@ final class MetalRenderer: NSObject, MTKViewDelegate {
         CVMetalTextureCacheCreate(nil, nil, device, nil, &cache)
         guard let createdCache = cache else { return nil }
         self.textureCache = createdCache
-        self.library = device.makeDefaultLibrary() ?? device.makeDefaultLibrary(bundle: .main)!
-        self.effectStack = EffectStack(device: device, library: library)
+        guard let lib = device.makeDefaultLibrary() ?? (try? device.makeDefaultLibrary(bundle: .main)) else { return nil }
+        self.library = lib
+        self.effectStack = EffectStack(device: device, library: lib)
         super.init()
         mtkView.device = device
         mtkView.colorPixelFormat = .bgra8Unorm

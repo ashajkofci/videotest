@@ -11,6 +11,10 @@ let package = Package(
         .executableTarget(
             name: "VJApp",
             resources: [.process("Resources")]
+        ),
+        .testTarget(
+            name: "VJAppTests",
+            dependencies: ["VJApp"]
         )
     ]
 )

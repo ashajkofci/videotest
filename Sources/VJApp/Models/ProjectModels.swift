@@ -4,7 +4,7 @@ struct Project: Codable {
     var schemaVersion: Int = 1
     var projectName: String
     var media: [MediaItem]
-    var scenes: [Scene]
+    var scenes: [VJScene]
     var output: OutputSettings
     var osc: OSCSettings
 }
@@ -30,7 +30,7 @@ struct Resolution: Codable {
     var height: Int
 }
 
-struct Scene: Codable, Identifiable {
+struct VJScene: Codable, Identifiable {
     var id: String
     var name: String
     var layers: [LayerInstance]

@@ -82,8 +82,6 @@ final class OSCDispatcher {
                     effect.parameters[key] = .float(value)
                 }
             }
-        default:
-            break
         }
     }
 

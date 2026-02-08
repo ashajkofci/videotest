@@ -23,9 +23,10 @@ struct VJApp: App {
         self.oscDispatcher = OSCDispatcher(engine: engine)
         self.outputWindowController = OutputWindowController(displayID: demoProject.output.displayId)
         self.projectStore = ProjectStore()
+        let dispatcher = oscDispatcher
         oscServer.onMessage = { [weak engine] message in
             guard let engine else { return }
-            oscDispatcher.dispatch(message: message, bindings: engine.project.osc.bindings)
+            dispatcher.dispatch(message: message, bindings: engine.project.osc.bindings)
         }
         oscServer.start()
         configureAutosave(for: engine)
