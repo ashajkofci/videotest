@@ -109,9 +109,10 @@ final class MetalRenderer: NSObject, MTKViewDelegate {
     }
 
     private func renderLayers(_ layers: [LayerInstance], encoder: MTLRenderCommandEncoder, opacity: Float) {
+        guard opacity > 0 else { return }
         let sortedLayers = layers.sorted { $0.order < $1.order }
         for layer in sortedLayers {
-            guard layer.opacity > 0, let texture = layerTextures[layer.mediaId] else { continue }
+            guard layer.opacity * opacity > 0, let texture = layerTextures[layer.mediaId] else { continue }
 
             let vertices = MeshBuilder.buildVertices(mapping: layer.mesh, transform: layer.transform)
             guard !vertices.isEmpty else { continue }

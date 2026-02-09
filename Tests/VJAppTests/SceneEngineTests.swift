@@ -474,10 +474,10 @@ final class SceneEngineTests: XCTestCase {
         XCTAssertTrue(engine.project.scenes[0].layers[0].effects[0].enabled)
     }
 
-    func testSeekAllLayersInvalidIndex() {
+    func testSeekActiveSceneLayersInvalidIndex() {
         let engine = makeEngine(sceneCount: 0)
         // Should not crash with no scenes
-        engine.seekAllLayers(to: 5.0)
+        engine.seekActiveSceneLayers(to: 5.0)
     }
 
     // MARK: - Helpers

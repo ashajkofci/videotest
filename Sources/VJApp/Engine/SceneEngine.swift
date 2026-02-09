@@ -80,7 +80,7 @@ final class SceneEngine: ObservableObject {
         }
     }
 
-    func seekAllLayers(to time: Double) {
+    func seekActiveSceneLayers(to time: Double) {
         guard project.scenes.indices.contains(activeSceneIndex) else { return }
         let cmTime = CMTime(seconds: time, preferredTimescale: 600)
         for layer in project.scenes[activeSceneIndex].layers {

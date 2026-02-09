@@ -287,22 +287,27 @@ struct TransportBar: View {
 struct TimelineBar: View {
     @ObservedObject var engine: SceneEngine
 
+    private var hasDuration: Bool {
+        engine.currentDuration > 0 && engine.currentDuration.isFinite
+    }
+
     var body: some View {
         VStack(spacing: 2) {
             HStack {
-                Text(formatTime(engine.currentPlaybackTime))
+                Text(hasDuration ? formatTime(engine.currentPlaybackTime) : "--:--")
                     .font(.caption.monospacedDigit())
                     .foregroundColor(.secondary)
 
                 Slider(
                     value: Binding(
                         get: { engine.currentPlaybackTime },
-                        set: { engine.seekAllLayers(to: $0) }
+                        set: { engine.seekActiveSceneLayers(to: $0) }
                     ),
                     in: 0...max(engine.currentDuration, 0.01)
                 )
+                .disabled(!hasDuration)
 
-                Text(formatTime(engine.currentDuration))
+                Text(hasDuration ? formatTime(engine.currentDuration) : "--:--")
                     .font(.caption.monospacedDigit())
                     .foregroundColor(.secondary)
             }
@@ -311,7 +316,7 @@ struct TimelineBar: View {
     }
 
     private func formatTime(_ seconds: Double) -> String {
-        guard seconds.isFinite, seconds >= 0 else { return "00:00" }
+        guard seconds.isFinite, seconds >= 0 else { return "--:--" }
         let mins = Int(seconds) / 60
         let secs = Int(seconds) % 60
         return String(format: "%02d:%02d", mins, secs)
