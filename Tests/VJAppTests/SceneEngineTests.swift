@@ -244,6 +244,81 @@ final class SceneEngineTests: XCTestCase {
         engine.removeLayer(fromSceneIndex: 99, layerId: "l0")
     }
 
+    // MARK: - Global Transport Controls
+
+    func testPlayAll() {
+        let engine = makeEngine(sceneCount: 1)
+        engine.pauseAll()
+        XCTAssertEqual(engine.project.scenes[0].layers[0].playback.state, .paused)
+        engine.playAll()
+        XCTAssertEqual(engine.project.scenes[0].layers[0].playback.state, .playing)
+    }
+
+    func testPauseAll() {
+        let engine = makeEngine(sceneCount: 1)
+        engine.pauseAll()
+        XCTAssertEqual(engine.project.scenes[0].layers[0].playback.state, .paused)
+    }
+
+    func testStopAll() {
+        let engine = makeEngine(sceneCount: 1)
+        engine.stopAll()
+        XCTAssertEqual(engine.project.scenes[0].layers[0].playback.state, .stopped)
+        XCTAssertEqual(engine.project.scenes[0].layers[0].playback.time, 0)
+    }
+
+    func testRestartAll() {
+        let engine = makeEngine(sceneCount: 1)
+        engine.pauseAll()
+        engine.restartAll()
+        XCTAssertEqual(engine.project.scenes[0].layers[0].playback.state, .playing)
+        XCTAssertEqual(engine.project.scenes[0].layers[0].playback.time, 0)
+    }
+
+    func testPlayAllNoScenes() {
+        let engine = makeEngine(sceneCount: 0)
+        // Should not crash
+        engine.playAll()
+        engine.pauseAll()
+        engine.stopAll()
+        engine.restartAll()
+    }
+
+    // MARK: - Per-Scene Transport Controls
+
+    func testPlayScene() {
+        let engine = makeEngine(sceneCount: 2)
+        engine.pauseScene(at: 1)
+        XCTAssertEqual(engine.project.scenes[1].layers[0].playback.state, .paused)
+        engine.playScene(at: 1)
+        XCTAssertEqual(engine.project.scenes[1].layers[0].playback.state, .playing)
+    }
+
+    func testPauseScene() {
+        let engine = makeEngine(sceneCount: 2)
+        engine.pauseScene(at: 0)
+        XCTAssertEqual(engine.project.scenes[0].layers[0].playback.state, .paused)
+        // Other scene should remain unaffected
+        XCTAssertEqual(engine.project.scenes[1].layers[0].playback.state, .playing)
+    }
+
+    func testStopScene() {
+        let engine = makeEngine(sceneCount: 2)
+        engine.stopScene(at: 0)
+        XCTAssertEqual(engine.project.scenes[0].layers[0].playback.state, .stopped)
+        XCTAssertEqual(engine.project.scenes[0].layers[0].playback.time, 0)
+        // Other scene should remain unaffected
+        XCTAssertEqual(engine.project.scenes[1].layers[0].playback.state, .playing)
+    }
+
+    func testPerSceneTransportInvalidIndex() {
+        let engine = makeEngine(sceneCount: 1)
+        // Should not crash
+        engine.playScene(at: 99)
+        engine.pauseScene(at: -1)
+        engine.stopScene(at: 99)
+    }
+
     // MARK: - Helpers
 
     private func makeEngine(sceneCount: Int) -> SceneEngine {

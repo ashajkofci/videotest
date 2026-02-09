@@ -67,6 +67,62 @@ final class SceneEngine: ObservableObject {
         self.project = project
     }
 
+    // MARK: - Global Transport Controls
+
+    func playAll() {
+        guard project.scenes.indices.contains(activeSceneIndex) else { return }
+        for i in project.scenes[activeSceneIndex].layers.indices {
+            project.scenes[activeSceneIndex].layers[i].playback.state = .playing
+        }
+    }
+
+    func pauseAll() {
+        guard project.scenes.indices.contains(activeSceneIndex) else { return }
+        for i in project.scenes[activeSceneIndex].layers.indices {
+            project.scenes[activeSceneIndex].layers[i].playback.state = .paused
+        }
+    }
+
+    func stopAll() {
+        guard project.scenes.indices.contains(activeSceneIndex) else { return }
+        for i in project.scenes[activeSceneIndex].layers.indices {
+            project.scenes[activeSceneIndex].layers[i].playback.state = .stopped
+            project.scenes[activeSceneIndex].layers[i].playback.time = 0
+        }
+    }
+
+    func restartAll() {
+        guard project.scenes.indices.contains(activeSceneIndex) else { return }
+        for i in project.scenes[activeSceneIndex].layers.indices {
+            project.scenes[activeSceneIndex].layers[i].playback.time = 0
+            project.scenes[activeSceneIndex].layers[i].playback.state = .playing
+        }
+    }
+
+    // MARK: - Per-Scene Transport Controls
+
+    func playScene(at sceneIndex: Int) {
+        guard project.scenes.indices.contains(sceneIndex) else { return }
+        for i in project.scenes[sceneIndex].layers.indices {
+            project.scenes[sceneIndex].layers[i].playback.state = .playing
+        }
+    }
+
+    func pauseScene(at sceneIndex: Int) {
+        guard project.scenes.indices.contains(sceneIndex) else { return }
+        for i in project.scenes[sceneIndex].layers.indices {
+            project.scenes[sceneIndex].layers[i].playback.state = .paused
+        }
+    }
+
+    func stopScene(at sceneIndex: Int) {
+        guard project.scenes.indices.contains(sceneIndex) else { return }
+        for i in project.scenes[sceneIndex].layers.indices {
+            project.scenes[sceneIndex].layers[i].playback.state = .stopped
+            project.scenes[sceneIndex].layers[i].playback.time = 0
+        }
+    }
+
     // MARK: - Media Management
 
     func addMediaItem(_ item: MediaItem) {
