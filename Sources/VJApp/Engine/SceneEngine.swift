@@ -67,6 +67,54 @@ final class SceneEngine: ObservableObject {
         self.project = project
     }
 
+    // MARK: - Media Management
+
+    func addMediaItem(_ item: MediaItem) {
+        project.media.append(item)
+    }
+
+    func removeMediaItem(id: String) {
+        project.media.removeAll { $0.id == id }
+    }
+
+    // MARK: - Scene Management
+
+    func addScene(name: String) {
+        let scene = VJScene(id: UUID().uuidString, name: name, layers: [])
+        project.scenes.append(scene)
+    }
+
+    func removeScene(id: String) {
+        guard let index = project.scenes.firstIndex(where: { $0.id == id }) else { return }
+        project.scenes.remove(at: index)
+        if activeSceneIndex >= project.scenes.count {
+            activeSceneIndex = max(0, project.scenes.count - 1)
+        }
+    }
+
+    // MARK: - Layer Management
+
+    func addLayer(toSceneIndex sceneIndex: Int, mediaId: String) {
+        guard project.scenes.indices.contains(sceneIndex) else { return }
+        let layer = LayerInstance(
+            id: UUID().uuidString,
+            mediaId: mediaId,
+            order: project.scenes[sceneIndex].layers.count,
+            transform: Transform(position: Vec2(x: 0.5, y: 0.5), scale: Vec2(x: 1, y: 1), rotation: 0, anchor: Vec2(x: 0.5, y: 0.5)),
+            opacity: 1.0,
+            blendMode: .normal,
+            playback: PlaybackSettings(state: .playing, loopMode: .loop, speed: 1.0, time: 0),
+            mesh: nil,
+            effects: []
+        )
+        project.scenes[sceneIndex].layers.append(layer)
+    }
+
+    func removeLayer(fromSceneIndex sceneIndex: Int, layerId: String) {
+        guard project.scenes.indices.contains(sceneIndex) else { return }
+        project.scenes[sceneIndex].layers.removeAll { $0.id == layerId }
+    }
+
     func updateLayer(index: Int, _ update: (inout LayerInstance) -> Void) {
         guard project.scenes.indices.contains(activeSceneIndex),
               project.scenes[activeSceneIndex].layers.indices.contains(index) else { return }
