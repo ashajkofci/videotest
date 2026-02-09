@@ -319,6 +319,167 @@ final class SceneEngineTests: XCTestCase {
         engine.stopScene(at: 99)
     }
 
+    // MARK: - Layer Update by Scene Index
+
+    func testUpdateLayerBySceneIndex() {
+        let engine = makeEngine(sceneCount: 2)
+        engine.updateLayer(sceneIndex: 1, layerIndex: 0) { layer in
+            layer.opacity = 0.3
+        }
+        XCTAssertEqual(engine.project.scenes[1].layers[0].opacity, Float(0.3), accuracy: Float(0.001))
+        // Scene 0 should not be affected
+        XCTAssertEqual(engine.project.scenes[0].layers[0].opacity, Float(1.0), accuracy: Float(0.001))
+    }
+
+    func testUpdateLayerBySceneIndexInvalidScene() {
+        let engine = makeEngine(sceneCount: 1)
+        // Should not crash
+        engine.updateLayer(sceneIndex: 99, layerIndex: 0) { layer in
+            layer.opacity = 0.5
+        }
+    }
+
+    func testUpdateLayerBySceneIndexInvalidLayer() {
+        let engine = makeEngine(sceneCount: 1)
+        // Should not crash
+        engine.updateLayer(sceneIndex: 0, layerIndex: 99) { layer in
+            layer.opacity = 0.5
+        }
+    }
+
+    func testUpdateLayerTransformPosition() {
+        let engine = makeEngine(sceneCount: 1)
+        engine.updateLayer(sceneIndex: 0, layerIndex: 0) { layer in
+            layer.transform.position = Vec2(x: 0.2, y: 0.8)
+        }
+        XCTAssertEqual(engine.project.scenes[0].layers[0].transform.position.x, Float(0.2), accuracy: Float(0.001))
+        XCTAssertEqual(engine.project.scenes[0].layers[0].transform.position.y, Float(0.8), accuracy: Float(0.001))
+    }
+
+    func testUpdateLayerTransformScale() {
+        let engine = makeEngine(sceneCount: 1)
+        engine.updateLayer(sceneIndex: 0, layerIndex: 0) { layer in
+            layer.transform.scale = Vec2(x: 2.0, y: 0.5)
+        }
+        XCTAssertEqual(engine.project.scenes[0].layers[0].transform.scale.x, Float(2.0), accuracy: Float(0.001))
+        XCTAssertEqual(engine.project.scenes[0].layers[0].transform.scale.y, Float(0.5), accuracy: Float(0.001))
+    }
+
+    // MARK: - Effect Management
+
+    func testAddEffectTint() {
+        let engine = makeEngine(sceneCount: 1)
+        XCTAssertEqual(engine.project.scenes[0].layers[0].effects.count, 0)
+        engine.addEffect(sceneIndex: 0, layerIndex: 0, type: .tint)
+        XCTAssertEqual(engine.project.scenes[0].layers[0].effects.count, 1)
+        XCTAssertEqual(engine.project.scenes[0].layers[0].effects[0].type, .tint)
+        XCTAssertTrue(engine.project.scenes[0].layers[0].effects[0].enabled)
+        XCTAssertNotNil(engine.project.scenes[0].layers[0].effects[0].parameters["color"])
+        XCTAssertNotNil(engine.project.scenes[0].layers[0].effects[0].parameters["amount"])
+    }
+
+    func testAddEffectBrightnessContrast() {
+        let engine = makeEngine(sceneCount: 1)
+        engine.addEffect(sceneIndex: 0, layerIndex: 0, type: .brightnessContrast)
+        XCTAssertEqual(engine.project.scenes[0].layers[0].effects.count, 1)
+        XCTAssertEqual(engine.project.scenes[0].layers[0].effects[0].type, .brightnessContrast)
+        XCTAssertNotNil(engine.project.scenes[0].layers[0].effects[0].parameters["brightness"])
+        XCTAssertNotNil(engine.project.scenes[0].layers[0].effects[0].parameters["contrast"])
+    }
+
+    func testAddEffectSaturation() {
+        let engine = makeEngine(sceneCount: 1)
+        engine.addEffect(sceneIndex: 0, layerIndex: 0, type: .saturation)
+        XCTAssertEqual(engine.project.scenes[0].layers[0].effects.count, 1)
+        XCTAssertEqual(engine.project.scenes[0].layers[0].effects[0].type, .saturation)
+        XCTAssertNotNil(engine.project.scenes[0].layers[0].effects[0].parameters["saturation"])
+    }
+
+    func testAddEffectHueShift() {
+        let engine = makeEngine(sceneCount: 1)
+        engine.addEffect(sceneIndex: 0, layerIndex: 0, type: .hueShift)
+        XCTAssertEqual(engine.project.scenes[0].layers[0].effects.count, 1)
+        XCTAssertEqual(engine.project.scenes[0].layers[0].effects[0].type, .hueShift)
+        XCTAssertNotNil(engine.project.scenes[0].layers[0].effects[0].parameters["hueShift"])
+    }
+
+    func testAddMultipleEffects() {
+        let engine = makeEngine(sceneCount: 1)
+        engine.addEffect(sceneIndex: 0, layerIndex: 0, type: .tint)
+        engine.addEffect(sceneIndex: 0, layerIndex: 0, type: .saturation)
+        XCTAssertEqual(engine.project.scenes[0].layers[0].effects.count, 2)
+    }
+
+    func testAddEffectInvalidSceneIndex() {
+        let engine = makeEngine(sceneCount: 1)
+        // Should not crash
+        engine.addEffect(sceneIndex: 99, layerIndex: 0, type: .tint)
+        XCTAssertEqual(engine.project.scenes[0].layers[0].effects.count, 0)
+    }
+
+    func testAddEffectInvalidLayerIndex() {
+        let engine = makeEngine(sceneCount: 1)
+        // Should not crash
+        engine.addEffect(sceneIndex: 0, layerIndex: 99, type: .tint)
+    }
+
+    func testRemoveEffect() {
+        let engine = makeEngine(sceneCount: 1)
+        engine.addEffect(sceneIndex: 0, layerIndex: 0, type: .tint)
+        let effectId = engine.project.scenes[0].layers[0].effects[0].id
+        engine.removeEffect(sceneIndex: 0, layerIndex: 0, effectId: effectId)
+        XCTAssertEqual(engine.project.scenes[0].layers[0].effects.count, 0)
+    }
+
+    func testRemoveEffectNotFound() {
+        let engine = makeEngine(sceneCount: 1)
+        engine.addEffect(sceneIndex: 0, layerIndex: 0, type: .tint)
+        // Should not crash, and should not remove the existing effect
+        engine.removeEffect(sceneIndex: 0, layerIndex: 0, effectId: "nonexistent")
+        XCTAssertEqual(engine.project.scenes[0].layers[0].effects.count, 1)
+    }
+
+    func testRemoveEffectInvalidIndices() {
+        let engine = makeEngine(sceneCount: 1)
+        // Should not crash
+        engine.removeEffect(sceneIndex: 99, layerIndex: 0, effectId: "e0")
+        engine.removeEffect(sceneIndex: 0, layerIndex: 99, effectId: "e0")
+    }
+
+    func testUpdateEffectBySceneAndId() {
+        let engine = makeEngine(sceneCount: 1)
+        engine.addEffect(sceneIndex: 0, layerIndex: 0, type: .tint)
+        let effectId = engine.project.scenes[0].layers[0].effects[0].id
+        engine.updateEffect(sceneIndex: 0, layerIndex: 0, effectId: effectId) { effect in
+            effect.enabled = false
+            effect.parameters["amount"] = .float(0.8)
+        }
+        let updatedEffect = engine.project.scenes[0].layers[0].effects[0]
+        XCTAssertFalse(updatedEffect.enabled)
+        if case .float(let amount) = updatedEffect.parameters["amount"] {
+            XCTAssertEqual(amount, Float(0.8), accuracy: Float(0.001))
+        } else {
+            XCTFail("Expected float parameter for amount")
+        }
+    }
+
+    func testUpdateEffectBySceneAndIdNotFound() {
+        let engine = makeEngine(sceneCount: 1)
+        engine.addEffect(sceneIndex: 0, layerIndex: 0, type: .tint)
+        // Should not crash
+        engine.updateEffect(sceneIndex: 0, layerIndex: 0, effectId: "nonexistent") { effect in
+            effect.enabled = false
+        }
+        // Original effect should be unchanged
+        XCTAssertTrue(engine.project.scenes[0].layers[0].effects[0].enabled)
+    }
+
+    func testSeekActiveSceneLayersInvalidIndex() {
+        let engine = makeEngine(sceneCount: 0)
+        // Should not crash with no scenes
+        engine.seekActiveSceneLayers(to: 5.0)
+    }
+
     // MARK: - Helpers
 
     private func makeEngine(sceneCount: Int) -> SceneEngine {
