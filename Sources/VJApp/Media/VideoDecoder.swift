@@ -45,6 +45,14 @@ final class VideoDecoder {
         player.rate = rate
     }
 
+    var currentTime: Double {
+        player.currentTime().seconds
+    }
+
+    var duration: Double {
+        asset.duration.seconds
+    }
+
     private func startPullingFrames() {
         guard !isRunning else { return }
         isRunning = true
