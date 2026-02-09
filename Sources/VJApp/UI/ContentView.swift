@@ -242,8 +242,8 @@ struct TransportBar: View {
 
             Spacer()
 
-            if engine.activeScene != nil {
-                Text("Scene: \(engine.activeScene?.name ?? "None")")
+            if let scene = engine.activeScene {
+                Text("Scene: \(scene.name)")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -329,6 +329,7 @@ struct VideoPreviewContainer: View {
     @Binding var previewScale: CGFloat
 
     @State private var dragStartOffset: CGSize = .zero
+    @State private var scaleAtGestureStart: CGFloat = 1.0
 
     var body: some View {
         GeometryReader { geometry in
@@ -357,11 +358,15 @@ struct VideoPreviewContainer: View {
                     .gesture(
                         MagnificationGesture()
                             .onChanged { value in
-                                previewScale = max(0.25, min(4.0, value))
+                                previewScale = max(0.25, min(4.0, scaleAtGestureStart * value))
+                            }
+                            .onEnded { _ in
+                                scaleAtGestureStart = previewScale
                             }
                     )
                     .onAppear {
                         dragStartOffset = previewOffset
+                        scaleAtGestureStart = previewScale
                     }
 
                 // Border overlay
